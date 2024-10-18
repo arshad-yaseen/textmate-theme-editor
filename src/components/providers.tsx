@@ -3,7 +3,6 @@
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { ThemeProvider } from "next-themes";
 import { PropsWithChildren } from "react";
-import RegisterCodeEditor from "./code/register-code-editor";
 
 const Providers = ({ children }: PropsWithChildren) => {
   return (
@@ -12,7 +11,6 @@ const Providers = ({ children }: PropsWithChildren) => {
       disableTransitionOnChange
       attribute="class"
     >
-      <RegisterCodeEditor />
       <TooltipProvider>{children}</TooltipProvider>
     </ThemeProvider>
   );

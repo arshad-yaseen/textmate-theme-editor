@@ -16,11 +16,11 @@ const ThemeToggle = () => {
     <Button variant="ghost" size="icon" onClick={handleToggle}>
       <SunIcon
         onClick={() => setTheme("light")}
-        className="h-5 w-5 hidden dark:block"
+        className="size-4 hidden dark:block"
       />
       <MoonIcon
         onClick={() => setTheme("dark")}
-        className="h-5 w-5 block dark:hidden"
+        className="size-4 block dark:hidden"
       />
     </Button>
   );

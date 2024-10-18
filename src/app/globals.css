@@ -72,3 +72,56 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* CodeMirror Editor Styles */
+.cm-editor {
+  @apply border border-input rounded-md;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  background-color: hsl(var(--background));
+}
+
+.cm-editor .cm-scroller {
+  @apply rounded-lg;
+}
+
+.cm-editor .cm-content {
+  font-family: var(--font-mono);
+}
+
+.cm-editor .cm-line {
+  @apply py-0.5;
+}
+
+.cm-editor .cm-gutters {
+  @apply border-r border-input;
+  background-color: hsl(var(--background));
+  padding: 0 10px;
+}
+
+.cm-editor .cm-activeLineGutter {
+  background-color: hsl(var(--background));
+}
+
+.cm-editor .cm-activeLine {
+  background-color: hsl(var(--background));
+}
+
+.cm-editor .cm-selectionBackground {
+  @apply bg-primary/20;
+}
+
+.cm-editor .cm-cursor {
+  @apply border-l-2 border-primary;
+}
+
+/* Reset default CodeMirror focus dashed border */
+.cm-editor.cm-focused {
+  outline: none;
+  @apply ring-1 ring-muted;
+}
+
+/* Reduce contrast of line numbers */
+.cm-editor .cm-lineNumbers {
+  @apply text-muted-foreground/70;
+}
