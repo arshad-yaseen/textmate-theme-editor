@@ -1,6 +1,8 @@
-export const tryParseJSON = (jsonString: string): unknown => {
+export const tryParseJSON = (
+  jsonString: unknown
+): Record<string, unknown> | null => {
   try {
-    return JSON.parse(jsonString);
+    return JSON.parse(jsonString as string);
   } catch {
     return null;
   }

@@ -1,27 +1,14 @@
-import useLocalStorage from "@/hooks/use-local-storage";
-
 import { CodeEditor } from "@/components/code-editor";
-import { tryParseJSON } from "@/utils/json";
+import { useTMThemeStoreShallow } from "@/stores/tm-theme";
 
 const RawEditor = () => {
-  const [code, setCode] = useLocalStorage("raw-editor-code", "");
-
-  const handleCodeChange = (value: string) => {
-    if (tryParseJSON(value)) {
-      setCode(value);
-    }
-  };
+  const [tmThemeJSON, setTMThemeJSON] = useTMThemeStoreShallow((state) => [
+    state.tmThemeJSON,
+    state.setTMThemeJSON,
+  ]);
 
   return (
-    <CodeEditor
-      value={code}
-      defaultValue={
-        tryParseJSON(code) ? JSON.stringify(tryParseJSON(code), null, 2) : ""
-      }
-      onChange={handleCodeChange}
-      height="85vh"
-      readOnly
-    />
+    <CodeEditor value={tmThemeJSON} onChange={setTMThemeJSON} height="85vh" />
   );
 };
 
