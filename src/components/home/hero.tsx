@@ -9,13 +9,13 @@ import Logo from "../logo";
 const Hero = () => {
   return (
     <section className="grid gap-8 max-w-3xl mx-auto text-center">
-      <Logo className="size-24" />
+      <Logo className="size-24 mt-8" />
       <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-tight">
-        Craft your perfect syntax
+        Design your own code theme
       </h1>
       <p className="text-lg font-medium text-muted-foreground">
-        Powerful editor for TextMate themes. Easily customize colors, preview in
-        real-time, and export your perfect syntax highlighting theme.
+        A powerful editor for creating code themes. Design your ideal syntax
+        highlighting for VS Code, Monaco Editor, CodeMirror, and more.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <Link

@@ -104,11 +104,7 @@
 }
 
 .cm-editor .cm-activeLine {
-  background-color: hsl(var(--background));
-}
-
-.cm-editor .cm-selectionBackground {
-  @apply bg-primary/20;
+  background-color: transparent;
 }
 
 .cm-editor .cm-cursor {

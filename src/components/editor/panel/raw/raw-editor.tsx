@@ -20,6 +20,7 @@ const RawEditor = () => {
       }
       onChange={handleCodeChange}
       height="85vh"
+      readOnly
     />
   );
 };

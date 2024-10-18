@@ -7,7 +7,7 @@ const Panel = () => {
   const [activeTab, setActiveTab] = useLocalStorage("editor-active-tab", "ui");
 
   return (
-    <div className="p-4">
+    <div className="px-4 pb-4 pt-2">
       <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-fit grid-cols-2">
           <TabsTrigger value="ui">UI Editor</TabsTrigger>
