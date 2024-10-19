@@ -121,3 +121,13 @@
 .cm-editor .cm-lineNumbers {
   @apply text-muted-foreground/70;
 }
+
+/* Shiki */
+.shiki-container pre {
+  padding: 16px;
+  overflow: auto;
+  font-variant-ligatures: none;
+  width: 100%;
+  line-height: 1.5;
+  font-weight: 450;
+}
