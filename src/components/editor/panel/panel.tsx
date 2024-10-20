@@ -1,3 +1,5 @@
+"use client";
+
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import UIEditor from "./ui/ui-editor";
 import RawEditor from "./raw/raw-editor";

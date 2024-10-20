@@ -1,8 +1,14 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import EditorHeader from "@/components/editor/editor-header";
-import Panel from "@/components/editor/panel/panel";
-import Preview from "@/components/editor/preview/preview";
+
+const Panel = dynamic(() => import("@/components/editor/panel/panel"), {
+  ssr: false,
+});
+const Preview = dynamic(() => import("@/components/editor/preview/preview"), {
+  ssr: false,
+});
 
 const Editor = () => {
   return (

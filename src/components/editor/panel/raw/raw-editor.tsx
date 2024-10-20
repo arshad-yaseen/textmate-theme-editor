@@ -1,3 +1,5 @@
+"use client";
+
 import { CodeEditor } from "@/components/code-editor";
 import { useTMThemeStoreShallow } from "@/stores/tm-theme";
 import { tryParseJSON } from "@/utils/json";
@@ -8,7 +10,6 @@ import { useEffect, useState } from "react";
 const RawEditor = () => {
   const { resolvedTheme, setTheme } = useTheme();
   const searchParams = useSearchParams();
-  const [isDemo, setIsDemo] = useState(false);
   const [tmThemeJSON, setTMThemeJSON] = useTMThemeStoreShallow((state) => [
     state.tmThemeJSON,
     state.setTMThemeJSON,
@@ -29,14 +30,9 @@ const RawEditor = () => {
               setTheme("dark");
             }
             setTMThemeJSON(JSON.stringify(parsed, null, 2));
-            setIsDemo(true);
           }
         });
     }
-
-    return () => {
-      setIsDemo(false);
-    };
   }, [searchParams, resolvedTheme, setTheme, setTMThemeJSON]);
 
   return (
@@ -44,7 +40,6 @@ const RawEditor = () => {
       value={tmThemeJSON}
       onChange={(value) => setTMThemeJSON(value)}
       height="85vh"
-      readOnly={isDemo}
     />
   );
 };

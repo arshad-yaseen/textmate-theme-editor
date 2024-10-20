@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { codeToHtml } from "shiki";
 import { AlertCircle, Loader, RefreshCw } from "lucide-react";
