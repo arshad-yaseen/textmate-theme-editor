@@ -37,7 +37,7 @@ const RawEditor = () => {
 
   return (
     <CodeEditor
-      value={tmThemeJSON}
+      value={tmThemeJSON || "{}"}
       onChange={(value) => setTMThemeJSON(value)}
       height="85vh"
     />
