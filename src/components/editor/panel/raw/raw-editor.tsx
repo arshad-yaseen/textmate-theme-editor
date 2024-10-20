@@ -1,5 +1,6 @@
 import { CodeEditor } from "@/components/code-editor";
 import { useTMThemeStoreShallow } from "@/stores/tm-theme";
+import stripJsonComments from "strip-json-comments";
 
 const RawEditor = () => {
   const [tmThemeJSON, setTMThemeJSON] = useTMThemeStoreShallow((state) => [
@@ -8,7 +9,11 @@ const RawEditor = () => {
   ]);
 
   return (
-    <CodeEditor value={tmThemeJSON} onChange={setTMThemeJSON} height="85vh" />
+    <CodeEditor
+      value={tmThemeJSON}
+      onChange={(value) => setTMThemeJSON(stripJsonComments(value))}
+      height="85vh"
+    />
   );
 };
 

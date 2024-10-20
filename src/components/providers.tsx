@@ -7,7 +7,7 @@ import { PropsWithChildren } from "react";
 const Providers = ({ children }: PropsWithChildren) => {
   return (
     <ThemeProvider
-      defaultTheme="dark"
+      defaultTheme="light"
       disableTransitionOnChange
       attribute="class"
     >

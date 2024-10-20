@@ -1,4 +1,5 @@
 import { CodeMirrorOptions, MonacoEditorOptions } from "@/types/code";
+import { BundledLanguage } from "shiki";
 
 export const DEFAULT_MONACO_OPTIONS: MonacoEditorOptions = {
   minimap: {
@@ -60,3 +61,11 @@ export const DEFAULT_CODE_MIRROR_OPTIONS: CodeMirrorOptions = {
   completionKeymap: true,
   tabSize: 2,
 };
+export const LANGUAGES: BundledLanguage[] = [
+  "javascript",
+  "python",
+  "java",
+  "c++",
+  "typescript",
+  "json",
+];

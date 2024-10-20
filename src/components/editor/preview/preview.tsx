@@ -1,28 +1,60 @@
+import { Button } from "@/components/ui/button";
+import useRandomGithubCode, {
+  CodeSnippet,
+} from "@/hooks/use-random-github-code";
 import { useTMThemeStoreShallow } from "@/stores/tm-theme";
 import { tryParseJSON } from "@/utils/json";
 import { useEffect, useState } from "react";
 import { codeToHtml } from "shiki";
+import { AlertCircle, Loader, RefreshCw } from "lucide-react";
+
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import useLocalStorage from "@/hooks/use-local-storage";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  JS_CODE,
-  JS_SMALL_CODE,
-  JSON_CODE,
-  JSX_CODE,
-  PYTHON_CODE,
-  PYTHON_SMALL_CODE,
-  SHELL_CODE,
-} from "@/constants/code-examples";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { LANGUAGES } from "@/constants/code";
+import { capitalize } from "@/utils/string";
 
 const Preview = () => {
   const [html, setHtml] = useState<string | null>(null);
   const [tmThemeJSON] = useTMThemeStoreShallow((state) => [state.tmThemeJSON]);
+  const { codeSnippet, loading, error, getRandomCode } = useRandomGithubCode();
+  const [storedCodeSnippet, setStoredCodeSnippet] =
+    useLocalStorage<CodeSnippet | null>("storedCodeSnippet", null);
+  const [selectedLanguage, setSelectedLanguage] = useLocalStorage<string>(
+    "selectedLanguage",
+    "javascript"
+  );
+
+  useEffect(() => {
+    const fetchInitialCode = async () => {
+      if (!storedCodeSnippet) {
+        await getRandomCode(selectedLanguage);
+      }
+    };
+    fetchInitialCode();
+  }, []);
+
+  useEffect(() => {
+    if (codeSnippet) {
+      setStoredCodeSnippet(codeSnippet);
+    }
+  }, [codeSnippet, setStoredCodeSnippet]);
 
   useEffect(() => {
     (async () => {
       try {
         const theme = tryParseJSON(tmThemeJSON);
-        if (theme) {
-          const html = await codeToHtml(PYTHON_CODE, {
-            lang: "python",
+        const snippetToUse = codeSnippet || storedCodeSnippet;
+        if (theme && snippetToUse) {
+          const html = await codeToHtml(snippetToUse.content, {
+            lang: selectedLanguage,
             theme,
           });
 
@@ -30,16 +62,84 @@ const Preview = () => {
         }
       } catch {}
     })();
-  }, [tmThemeJSON]);
+  }, [tmThemeJSON, codeSnippet, storedCodeSnippet, selectedLanguage]);
+
+  const handleFetchRandomCode = async () => {
+    await getRandomCode(selectedLanguage);
+  };
+
+  const handleLanguageChange = async (value: string) => {
+    const previousLanguage = selectedLanguage;
+    setSelectedLanguage(value);
+    await getRandomCode(value);
+    if (error) {
+      setSelectedLanguage(previousLanguage);
+    }
+  };
 
   return (
-    <div className="w-full h-full p-4 pt-14">
-      <div
-        dangerouslySetInnerHTML={{ __html: html ?? "" }}
-        className={
-          "shiki-container relative flex h-[85vh] overflow-hidden hyphens-none whitespace-pre break-normal rounded-lg border bg-background text-left font-mono text-sm no-scrollbar [word-spacing:normal]"
-        }
-      />
+    <div className="w-full h-full flex flex-col px-4">
+      <header className="flex justify-between items-center min-h-14">
+        <Select onValueChange={handleLanguageChange} value={selectedLanguage}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select Language" />
+          </SelectTrigger>
+          <SelectContent>
+            {LANGUAGES.map((lang) => (
+              <SelectItem key={lang} value={lang}>
+                {capitalize(lang)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button
+          onClick={handleFetchRandomCode}
+          disabled={loading}
+          className="flex items-center"
+        >
+          <RefreshCw className="size-4 mr-2" />
+          New Example
+        </Button>
+      </header>
+
+      {error && (
+        <Alert variant="destructive" className="mb-2">
+          <AlertCircle className="size-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      <AnimatePresence mode="wait">
+        {loading ? (
+          <motion.div
+            key="loader"
+            className="flex items-center justify-center flex-grow"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <Loader className="size-4 animate-spin text-primary" />
+          </motion.div>
+        ) : html ? (
+          <motion.div
+            key="codeblock"
+            className="flex-grow overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <div
+              dangerouslySetInnerHTML={{ __html: html }}
+              className={
+                "shiki-container relative flex h-[calc(100%-25px)] overflow-hidden hyphens-none whitespace-pre break-normal rounded-lg border border-transparent dark:border-input bg-background text-left font-mono text-sm no-scrollbar [word-spacing:normal]"
+              }
+            />
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 };
