@@ -3,12 +3,10 @@
 import { CodeEditor } from "@/components/code-editor";
 import { useTMThemeStoreShallow } from "@/stores/tm-theme";
 import { tryParseJSON } from "@/utils/json";
-import { useTheme } from "next-themes";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 const RawEditor = () => {
-  const { resolvedTheme, setTheme } = useTheme();
   const searchParams = useSearchParams();
   const [tmThemeJSON, setTMThemeJSON] = useTMThemeStoreShallow((state) => [
     state.tmThemeJSON,
@@ -29,17 +27,11 @@ const RawEditor = () => {
         .then((json) => {
           const parsed = tryParseJSON(json);
           if (parsed) {
-            const type = parsed.type;
-            if (type === "light" && resolvedTheme !== "light") {
-              setTheme("light");
-            } else if (type === "dark" && resolvedTheme !== "dark") {
-              setTheme("dark");
-            }
             setTMThemeJSON(JSON.stringify(parsed, null, 2));
           }
         });
     }
-  }, [searchParams, resolvedTheme, setTheme, setTMThemeJSON]);
+  }, [searchParams, setTMThemeJSON]);
 
   return (
     <CodeEditor
