@@ -16,6 +16,12 @@ const RawEditor = () => {
   ]);
 
   useEffect(() => {
+    if (!tmThemeJSON) {
+      setTMThemeJSON("{}");
+    }
+  }, [tmThemeJSON, setTMThemeJSON]);
+
+  useEffect(() => {
     const themeUrl = searchParams.get("demo");
     if (themeUrl) {
       fetch(themeUrl)
@@ -37,7 +43,7 @@ const RawEditor = () => {
 
   return (
     <CodeEditor
-      value={tmThemeJSON || "{}"}
+      value={tmThemeJSON}
       onChange={(value) => setTMThemeJSON(value)}
       height="85vh"
     />
