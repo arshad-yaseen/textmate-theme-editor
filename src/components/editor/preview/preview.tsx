@@ -72,9 +72,6 @@ const Preview = () => {
     const previousLanguage = selectedLanguage;
     setSelectedLanguage(value);
     await getRandomCode(value);
-    if (error) {
-      setSelectedLanguage(previousLanguage);
-    }
   };
 
   return (
@@ -134,7 +131,7 @@ const Preview = () => {
             <div
               dangerouslySetInnerHTML={{ __html: html }}
               className={
-                "shiki-container relative flex h-[calc(100%-25px)] overflow-hidden hyphens-none whitespace-pre break-normal rounded-lg border border-transparent dark:border-input bg-background text-left font-mono text-sm no-scrollbar [word-spacing:normal]"
+                "shiki-container relative flex h-[calc(100%-25px)] overflow-hidden hyphens-none whitespace-pre break-normal rounded-lg border border-input bg-background text-left font-mono text-sm no-scrollbar [word-spacing:normal]"
               }
             />
           </motion.div>
