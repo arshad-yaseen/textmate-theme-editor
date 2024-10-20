@@ -11,6 +11,7 @@ import useRandomGithubCode, {
 import { useTMThemeStoreShallow } from "@/stores/tm-theme";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { tryParseJSON } from "@/utils/json";
+import PreviewHeader from "./preview-header";
 
 const Preview = () => {
   const [html, setHtml] = useState<string | null>(null);
