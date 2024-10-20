@@ -5,7 +5,7 @@ import { useTMThemeStoreShallow } from "@/stores/tm-theme";
 import { tryParseJSON } from "@/utils/json";
 import { useTheme } from "next-themes";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 const RawEditor = () => {
   const { resolvedTheme, setTheme } = useTheme();
