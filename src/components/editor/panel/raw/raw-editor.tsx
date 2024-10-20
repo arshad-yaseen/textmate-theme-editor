@@ -37,7 +37,7 @@ const RawEditor = () => {
     return () => {
       setIsDemo(false);
     };
-  }, [searchParams]);
+  }, [searchParams, resolvedTheme, setTheme, setTMThemeJSON]);
 
   return (
     <CodeEditor

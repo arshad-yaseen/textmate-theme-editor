@@ -1,16 +1,9 @@
-import { Button } from "@/components/ui/button";
-import useRandomGithubCode, {
-  CodeSnippet,
-} from "@/hooks/use-random-github-code";
-import { useTMThemeStoreShallow } from "@/stores/tm-theme";
-import { tryParseJSON } from "@/utils/json";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { codeToHtml } from "shiki";
 import { AlertCircle, Loader, RefreshCw } from "lucide-react";
-
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import useLocalStorage from "@/hooks/use-local-storage";
 import { AnimatePresence, motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Select,
   SelectContent,
@@ -18,6 +11,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import useRandomGithubCode, {
+  CodeSnippet,
+} from "@/hooks/use-random-github-code";
+import { useTMThemeStoreShallow } from "@/stores/tm-theme";
+import useLocalStorage from "@/hooks/use-local-storage";
+import { tryParseJSON } from "@/utils/json";
 import { LANGUAGES } from "@/constants/code";
 import { capitalize } from "@/utils/string";
 
@@ -32,14 +31,15 @@ const Preview = () => {
     "javascript"
   );
 
+  const fetchInitialCode = useCallback(async () => {
+    if (!storedCodeSnippet) {
+      await getRandomCode(selectedLanguage);
+    }
+  }, [selectedLanguage, getRandomCode, storedCodeSnippet]);
+
   useEffect(() => {
-    const fetchInitialCode = async () => {
-      if (!storedCodeSnippet) {
-        await getRandomCode(selectedLanguage);
-      }
-    };
     fetchInitialCode();
-  }, []);
+  }, [fetchInitialCode]);
 
   useEffect(() => {
     if (codeSnippet) {
@@ -48,31 +48,46 @@ const Preview = () => {
   }, [codeSnippet, setStoredCodeSnippet]);
 
   useEffect(() => {
-    (async () => {
+    const renderCode = async () => {
       try {
         const theme = tryParseJSON(tmThemeJSON);
         const snippetToUse = codeSnippet || storedCodeSnippet;
         if (theme && snippetToUse) {
-          const html = await codeToHtml(snippetToUse.content, {
+          const renderedHtml = await codeToHtml(snippetToUse.content, {
             lang: selectedLanguage,
             theme,
           });
-
-          setHtml(html);
+          setHtml(renderedHtml);
         }
-      } catch {}
-    })();
+      } catch (error) {
+        console.error("Error rendering code:", error);
+      }
+    };
+
+    renderCode();
   }, [tmThemeJSON, codeSnippet, storedCodeSnippet, selectedLanguage]);
 
-  const handleFetchRandomCode = async () => {
+  const handleFetchRandomCode = useCallback(async () => {
     await getRandomCode(selectedLanguage);
-  };
+  }, [getRandomCode, selectedLanguage]);
 
-  const handleLanguageChange = async (value: string) => {
-    const previousLanguage = selectedLanguage;
-    setSelectedLanguage(value);
-    await getRandomCode(value);
-  };
+  const handleLanguageChange = useCallback(
+    async (value: string) => {
+      setSelectedLanguage(value);
+      await getRandomCode(value);
+    },
+    [getRandomCode, setSelectedLanguage]
+  );
+
+  const languageOptions = useMemo(
+    () =>
+      LANGUAGES.map((lang) => (
+        <SelectItem key={lang} value={lang}>
+          {capitalize(lang)}
+        </SelectItem>
+      )),
+    []
+  );
 
   return (
     <div className="w-full h-full flex flex-col px-4">
@@ -81,13 +96,7 @@ const Preview = () => {
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select Language" />
           </SelectTrigger>
-          <SelectContent>
-            {LANGUAGES.map((lang) => (
-              <SelectItem key={lang} value={lang}>
-                {capitalize(lang)}
-              </SelectItem>
-            ))}
-          </SelectContent>
+          <SelectContent>{languageOptions}</SelectContent>
         </Select>
         <Button
           onClick={handleFetchRandomCode}
@@ -130,9 +139,7 @@ const Preview = () => {
           >
             <div
               dangerouslySetInnerHTML={{ __html: html }}
-              className={
-                "shiki-container relative flex h-[calc(100%-25px)] overflow-hidden hyphens-none whitespace-pre break-normal rounded-lg border border-input bg-background text-left font-mono text-sm no-scrollbar [word-spacing:normal]"
-              }
+              className="shiki-container relative flex h-[calc(100%-25px)] overflow-hidden hyphens-none whitespace-pre break-normal rounded-lg border border-input bg-background text-left font-mono text-sm no-scrollbar [word-spacing:normal]"
             />
           </motion.div>
         ) : null}

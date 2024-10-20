@@ -1,17 +1,5 @@
 import { NextResponse } from "next/server";
 
-interface CodeSnippet {
-  name: string;
-  path: string;
-  repository: {
-    full_name: string;
-    html_url: string;
-  };
-  url: string;
-  html_url: string;
-  content: string;
-}
-
 const MAX_CONTENT_LENGTH = 500 * 80;
 
 export async function GET(request: Request) {
@@ -111,44 +99,40 @@ export async function GET(request: Request) {
     }
 
     // Step 3: Randomly select a code snippet from the page
-    let validSnippet = null;
-    let attempts = 0;
-    const maxAttempts = items.length;
+    const randomIndex = Math.floor(Math.random() * items.length);
+    const randomSnippet = items[randomIndex];
 
-    while (!validSnippet && attempts < maxAttempts) {
-      const randomIndex = Math.floor(Math.random() * items.length);
-      const randomSnippet = items[randomIndex];
+    // Step 4: Fetch the actual code content
+    const contentResponse = await fetch(randomSnippet.url, {
+      headers: {
+        Accept: "application/vnd.github.v3.raw",
+        Authorization: `token ${GITHUB_TOKEN}`,
+      },
+    });
 
-      // Step 4: Fetch the actual code content
-      const contentResponse = await fetch(randomSnippet.url, {
-        headers: {
-          Accept: "application/vnd.github.v3.raw",
-          Authorization: `token ${GITHUB_TOKEN}`,
-        },
-      });
-
-      if (contentResponse.ok) {
-        const codeContent = await contentResponse.text();
-        if (codeContent.length <= MAX_CONTENT_LENGTH) {
-          validSnippet = { ...randomSnippet, content: codeContent };
-          break;
-        }
-      }
-
-      attempts++;
-    }
-
-    if (!validSnippet) {
+    if (!contentResponse.ok) {
       return NextResponse.json(
-        { error: "No code snippets found with less than 500 lines." },
-        { status: 404 }
+        { error: "Failed to fetch code content." },
+        { status: contentResponse.status }
       );
     }
 
+    const codeContent = await contentResponse.text();
+    if (codeContent.length > MAX_CONTENT_LENGTH) {
+      return NextResponse.json(
+        { error: "Selected code snippet exceeds maximum length." },
+        { status: 413 }
+      );
+    }
+
+    const validSnippet = { ...randomSnippet, content: codeContent };
     return NextResponse.json({ codeSnippet: validSnippet });
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: error.message || "An unknown error occurred." },
+      {
+        error:
+          error instanceof Error ? error.message : "An unknown error occurred.",
+      },
       { status: 500 }
     );
   }
