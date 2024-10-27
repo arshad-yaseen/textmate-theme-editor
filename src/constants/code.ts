@@ -20,4 +20,10 @@ export const LANGUAGES: BundledLanguage[] = [
   "c++",
   "typescript",
   "json",
+  "yaml",
+  "css",
+  "markdown",
+  "html",
+  "shell",
+  "bash",
 ];
